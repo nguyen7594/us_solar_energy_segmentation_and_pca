@@ -402,8 +402,9 @@ corrplot(corr_mat)
 
 ![](Project_solar_energy_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
-\#Assumption: dataset is multivariate normality. \# Principal Component
-Analysis - States level
+\#Assumption: dataset is multivariate normality.
+
+# Principal Component Analysis - States level
 
 ``` r
 lmi_pca_state <- princomp(num_vabs_cp_lmi_state.s, cor=T)
@@ -504,12 +505,17 @@ plot_usmap(data = potential_state, values = "scores", lines = "black") +
 
 ![](Project_solar_energy_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
 
-\#Inference PC1: PC1 shows the overall potential of solar rooftop energy
-capacity in different states for LMI households. It explains nearly 88%
-of the variance of original dataset. Based on PC1 scores, it would be
-obeserved that as expected, California, Texas and Florida have most
-extremely potential in solar rooftop energy capacity compared to other
-states. It is a little suprised that some north states, eg: New York,
+\#Inference PC1:
+
+PC1 shows the overall potential of solar rooftop energy capacity in
+different states for LMI households. It explains nearly 88% of the
+variance of original dataset.
+
+Based on PC1 scores, it would be obeserved that as expected, California,
+Texas and Florida have most extremely potential in solar rooftop energy
+capacity compared to other states.
+
+It is a little suprised that some north states, eg: New York,
 Pennsylvania, Massachusetts, New Jersey,… have considerable potential
 capacity for solar rooftop energy, even higher compared to other sunbelt
 states for LMI
@@ -537,14 +543,19 @@ plot_usmap(data = potential_state_PC2, values = "scores", lines = "black") +
 
 ![](Project_solar_energy_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
-Inference PC2: It explains 10% of dataset variance There is a contrast
-in solar rooftop potential capacity in 2 groups: multifamily-own and
-single-family-rent for LMI households. *need to understand more details
-what is multifamily/single family and rent/own* For Texas and
-California, there is a higher focus of solar rooftop capacity potential
-in single-family-rent. *WHY?* For north states, eg: New York, New
-Jersey,… and Florida, there is a higher focus of solar rooftop capacity
-potential in multifamily-own. *WHY?*
+\#Inference PC2:
+
+It explains 10% of dataset variance
+
+There is a contrast in solar rooftop potential capacity in 2 groups:
+multifamily-own and single-family-rent for LMI households.
+
+For Texas and California, there is a higher focus of solar rooftop
+capacity potential in single-family-rent.
+
+For north states, eg: New York, New Jersey,… and Florida, there is a
+higher focus of solar rooftop capacity potential in multifamily-own.
+*WHY?*
 
 \#\#———————————————————————-\#
 
@@ -552,7 +563,9 @@ potential in multifamily-own. *WHY?*
 
 ## States level - SUM
 
-**Hierarchical Clustering** *overall sum capacity*
+**Hierarchical Clustering**
+
+*overall sum capacity*
 
 ``` r
 dist_state <- dist(num_vabs_cp_lmi_state.s)
@@ -722,10 +735,12 @@ plot(mclust_state,what='BIC')
 ## Clustering using Mean aggregation at State level
 
 \#PurposeAverage solar rooftop energy capacity per county for each state
+
 \#Reason: reduce the effect of size of large states eg: Cali, Texas,… to
 observe more the effect of other factors eg: housing type, tenure,
-income,… \#Assumption: county sample size for each state are
-approximately same
+income,…
+
+\#Assumption: county sample size for each state are approximately same
 
 ``` r
 capacity_potential_lmi_state_mn <- capacity_potential_lmi_clean %>%
@@ -814,9 +829,12 @@ summary(lmi_mn_pc, loading=T)
     ## mod_sf_own_mw        0.146  0.106 -0.180  -0.177  -0.134 
     ## mod_sf_rent_mw       0.312 -0.584  0.268  -0.162  -0.186
 
-PC1: the overall average capacity per county for each states PC2: the
-contrast between mf\_own and sf\_rent, the higher score, the higher from
-mf\_own PC3: the contrast between Risk-free (mf\_own, sf\_rent)v
+PC1: the overall average capacity per county for each states
+
+PC2: the contrast between mf\_own and sf\_rent, the higher score, the
+higher from mf\_own
+
+PC3: the contrast between Risk-free (mf\_own, sf\_rent)v
 Risk-seeker(mf\_rent,sf\_own), the higher the less risk
 
 ``` r
@@ -950,24 +968,8 @@ lmi_scores$States <- capacity_potential_lmi_state_mn$state_name
 ```
 
 ``` r
-lmi_scores
+#lmi_scores
 ```
-
-    ## # A tibble: 51 x 14
-    ##    Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7   Comp.8   Comp.9
-    ##     <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>    <dbl>    <dbl>
-    ##  1  -1.44 -0.529  -0.0839  0.0445  0.296   0.0938 -0.0533 -0.0824   0.0532 
-    ##  2  -2.51  0.362   0.104  -0.189  -0.133  -0.0814 -0.0762  0.00667 -0.00772
-    ##  3   5.94 -3.54    0.266   0.372   0.999  -0.337   0.0365 -0.0324  -0.164  
-    ##  4  -2.14 -0.188   0.0504 -0.103   0.144  -0.0370 -0.0494 -0.0517  -0.0135 
-    ##  5  10.3  -4.82    0.205  -0.899  -0.514   0.502   0.0622 -0.0460   0.0813 
-    ##  6  -1.62 -0.0278  0.0902 -0.0512 -0.206  -0.0170  0.0155  0.0171  -0.00700
-    ##  7   6.18  1.67   -1.35   -0.0109  0.0167  0.967  -0.0648 -0.0576  -0.104  
-    ##  8   5.05  1.43    0.383   1.50   -0.498  -0.447   0.106  -0.116   -0.0229 
-    ##  9   2.49  3.60    2.20   -0.862   0.480   0.543   0.121   0.0513   0.00641
-    ## 10   4.34 -1.11    0.401   1.22    0.488   0.0145 -0.111   0.199    0.0880 
-    ## # ... with 41 more rows, and 5 more variables: Comp.10 <dbl>,
-    ## #   Comp.11 <dbl>, Comp.12 <dbl>, Cluster <fct>, States <chr>
 
 ``` r
 #plot(lmi_mn_pc$scores[,1:2],fill=km$cluster)
@@ -1044,22 +1046,10 @@ summary(mc)
 solar energy potential.
 
 ``` r
-str(num_vabs_cp_lmi)
+#str(num_vabs_cp_lmi)
 ```
 
-    ## 'data.frame':    3129 obs. of  12 variables:
-    ##  $ very_low_mf_own_mw : num  0.109 1.721 0.182 0.127 0.11 ...
-    ##  $ very_low_mf_rent_mw: num  3.9 17.17 5.91 1.45 3.47 ...
-    ##  $ very_low_sf_own_mw : num  9.71 39.38 5.1 4.17 12.55 ...
-    ##  $ very_low_sf_rent_mw: num  6.4 15.91 4.85 2.08 5.33 ...
-    ##  $ low_mf_own_mw      : num  0.0793 1.3615 0.0487 0.0466 0.1411 ...
-    ##  $ low_mf_rent_mw     : num  1.8 10.15 1.19 1.11 2.33 ...
-    ##  $ low_sf_own_mw      : num  5.22 26.92 1.24 3.53 8.83 ...
-    ##  $ low_sf_rent_mw     : num  1.926 8.583 0.597 1.026 2.654 ...
-    ##  $ mod_mf_own_mw      : num  0.1106 2.3403 0.1754 0.0771 0.3049 ...
-    ##  $ mod_mf_rent_mw     : num  2.55 16.86 2.63 1.51 2.5 ...
-    ##  $ mod_sf_own_mw      : num  16.12 51.21 5.1 5.86 18.29 ...
-    ##  $ mod_sf_rent_mw     : num  3.61 13.76 1.5 1.39 2.67 ...
+\#Factor analysis with cutoff = 0.5 for 2 factors
 
 ``` r
 lmi_fa <- factanal(num_vabs_cp_lmi,factors=2)
@@ -1226,159 +1216,7 @@ sqrt(mean((cor(num_vabs_cp_lmi)-corHat)^2))
 
     ## [1] 0.01768467
 
-``` r
-bt_model <- specifyModel(text='sf -> very_low_sf_own_mw, lambda1, NA
-                                sf -> very_low_sf_rent_mw, lambda2, NA
-                                sf -> low_sf_own_mw, lambda3, NA
-                                sf -> low_sf_rent_mw, lambda4, NA
-                                sf -> mod_sf_own_mw, lambda5, NA
-                                sf -> mod_sf_rent_mw, lambda6, NA
-                                mf_r -> very_low_mf_rent_mw, lambda7, NA
-                                mf_r -> low_mf_rent_mw, lambda8, NA
-                                mf_r -> mod_mf_rent_mw, lambda9, NA
-                                mf_o -> very_low_mf_own_mw, lambda10, NA
-                                mf_o -> low_mf_own_mw, lambda11, NA
-                                mf_o -> mod_mf_own_mw, lambda12, NA
-                                sf <-> mf_r, rho1, NA
-                                sf <-> mf_o, rho2, NA
-                                mf_o <-> mf_r, rho3, NA 
-                                very_low_sf_own_mw <-> very_low_sf_own_mw, theta1, NA
-                                very_low_sf_rent_mw <-> very_low_sf_rent_mw, theta2, NA
-                                low_sf_own_mw <-> low_sf_own_mw, theta3, NA
-                                low_sf_rent_mw <-> low_sf_rent_mw, theta4, NA
-                                mod_sf_own_mw <-> mod_sf_own_mw, theta5, NA
-                                mod_sf_rent_mw <-> mod_sf_rent_mw, theta6, NA
-                                very_low_mf_own_mw <-> very_low_mf_own_mw, theta7, NA
-                                very_low_mf_rent_mw <-> very_low_mf_rent_mw, theta8, NA
-                                low_mf_own_mw <-> low_mf_own_mw, theta9, NA
-                                low_mf_rent_mw <-> low_mf_rent_mw, theta10, NA
-                                mod_mf_own_mw <-> mod_mf_own_mw, theta11, NA
-                                mod_mf_rent_mw <-> mod_mf_rent_mw, theta12, NA
-                                sf <-> sf, NA, 1
-                                mf_o <-> mf_o, NA, 1
-                                mf_r <-> mf_r, NA, 1')
-```
-
-    ## NOTE: it is generally simpler to use specifyEquations() or cfa()
-    ##       see ?specifyEquations
-
-``` r
-bt_sem <- sem(bt_model,cor(num_vabs_cp_lmi), nrow(num_vabs_cp_lmi))
-summary(bt_sem)
-```
-
-    ## 
-    ##  Model Chisquare =  31154.18   Df =  51 Pr(>Chisq) = 0
-    ##  AIC =  31208.18
-    ##  BIC =  30743.71
-    ## 
-    ##  Normalized Residuals
-    ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-    ## -4.593959 -0.838181  0.000037 -0.035430  0.638978  5.189006 
-    ## 
-    ##  R-square for Endogenous Variables
-    ##  very_low_sf_own_mw very_low_sf_rent_mw       low_sf_own_mw 
-    ##              0.9568              0.9104              0.9585 
-    ##      low_sf_rent_mw       mod_sf_own_mw      mod_sf_rent_mw 
-    ##              0.9079              0.9871              0.9160 
-    ## very_low_mf_rent_mw      low_mf_rent_mw      mod_mf_rent_mw 
-    ##              0.9682              0.9915              0.9797 
-    ##  very_low_mf_own_mw       low_mf_own_mw       mod_mf_own_mw 
-    ##              0.9686              0.9970              0.9727 
-    ## 
-    ##  Parameter Estimates
-    ##          Estimate    Std Error    z value    Pr(>|z|)     
-    ## lambda1  0.978180700 0.0129175933  75.724686  0.000000e+00
-    ## lambda2  0.954154690 0.0132050101  72.257021  0.000000e+00
-    ## lambda3  0.979052338 0.0129069227  75.854823  0.000000e+00
-    ## lambda4  0.952851500 0.0132202075  72.075382  0.000000e+00
-    ## lambda5  0.993525830 0.0127274719  78.061522  0.000000e+00
-    ## lambda6  0.957079945 0.0131707038  72.667335  0.000000e+00
-    ## lambda7  0.983970797 0.0128454478  76.600739  0.000000e+00
-    ## lambda8  0.995764514 0.0126989835  78.412931  0.000000e+00
-    ## lambda9  0.989813735 0.0127732504  77.491140  0.000000e+00
-    ## lambda10 0.984154087 0.0128432708  76.627995  0.000000e+00
-    ## lambda11 0.998486539 0.0126652282  78.836838  0.000000e+00
-    ## lambda12 0.986271326 0.0128172800  76.948567  0.000000e+00
-    ## rho1     0.929898468 0.0025274797 367.915305  0.000000e+00
-    ## rho2     0.721892811 0.0086447747  83.506261  0.000000e+00
-    ## rho3     0.825351022 0.0057711566 143.013106  0.000000e+00
-    ## theta1   0.043161766 0.0012824970  33.654476 2.681551e-248
-    ## theta2   0.089588971 0.0024247111  36.948308 7.753717e-299
-    ## theta3   0.041455744 0.0012419098  33.380641 2.618253e-244
-    ## theta4   0.092072683 0.0024865964  37.027594 4.120512e-300
-    ## theta5   0.012905699 0.0006473961  19.934779  2.031987e-88
-    ## theta6   0.083996990 0.0022855073  36.752011 1.079755e-295
-    ## theta7   0.031439684 0.0009659348  32.548455 2.201874e-232
-    ## theta8   0.031800587 0.0009698349  32.789692 8.258851e-236
-    ## theta9   0.003023571 0.0005640714   5.360262  8.310114e-08
-    ## theta10  0.008452116 0.0005571182  15.171137  5.491747e-52
-    ## theta11  0.027267828 0.0008817115  30.926020 5.339180e-210
-    ## theta12  0.020267839 0.0007322056  27.680532 1.197889e-168
-    ##                                                      
-    ## lambda1  very_low_sf_own_mw <--- sf                  
-    ## lambda2  very_low_sf_rent_mw <--- sf                 
-    ## lambda3  low_sf_own_mw <--- sf                       
-    ## lambda4  low_sf_rent_mw <--- sf                      
-    ## lambda5  mod_sf_own_mw <--- sf                       
-    ## lambda6  mod_sf_rent_mw <--- sf                      
-    ## lambda7  very_low_mf_rent_mw <--- mf_r               
-    ## lambda8  low_mf_rent_mw <--- mf_r                    
-    ## lambda9  mod_mf_rent_mw <--- mf_r                    
-    ## lambda10 very_low_mf_own_mw <--- mf_o                
-    ## lambda11 low_mf_own_mw <--- mf_o                     
-    ## lambda12 mod_mf_own_mw <--- mf_o                     
-    ## rho1     mf_r <--> sf                                
-    ## rho2     mf_o <--> sf                                
-    ## rho3     mf_r <--> mf_o                              
-    ## theta1   very_low_sf_own_mw <--> very_low_sf_own_mw  
-    ## theta2   very_low_sf_rent_mw <--> very_low_sf_rent_mw
-    ## theta3   low_sf_own_mw <--> low_sf_own_mw            
-    ## theta4   low_sf_rent_mw <--> low_sf_rent_mw          
-    ## theta5   mod_sf_own_mw <--> mod_sf_own_mw            
-    ## theta6   mod_sf_rent_mw <--> mod_sf_rent_mw          
-    ## theta7   very_low_mf_own_mw <--> very_low_mf_own_mw  
-    ## theta8   very_low_mf_rent_mw <--> very_low_mf_rent_mw
-    ## theta9   low_mf_own_mw <--> low_mf_own_mw            
-    ## theta10  low_mf_rent_mw <--> low_mf_rent_mw          
-    ## theta11  mod_mf_own_mw <--> mod_mf_own_mw            
-    ## theta12  mod_mf_rent_mw <--> mod_mf_rent_mw          
-    ## 
-    ##  Iterations =  128
-
-``` r
-semPaths(bt_sem,rotation=2,'est',edge.label.cex = 1.3)
-```
-
-![](Project_solar_energy_files/figure-gfm/unnamed-chunk-76-1.png)<!-- -->
-
-SRMR, GFI, and AGFI:
-
-``` r
-options(fit.indices = c('GFI','AGFI','SRMR'))
-criteria = summary(bt_sem)
-```
-
-``` r
-criteria$SRMR
-```
-
-    ## [1] 0.03734287
-
-``` r
-criteria$GFI
-```
-
-    ## [1] 0.448834
-
-``` r
-criteria$AGFI
-```
-
-    ## [1] 0.1570402
-
-\#\#Community sharing and Personal
-use
+## 2 Factors: Community sharing and Personal use
 
 ``` r
 bt_model <- specifyModel(text= 'Personal -> very_low_sf_own_mw, lambda1, NA
@@ -1420,9 +1258,8 @@ summary(bt_sem2)
 
     ## 
     ##  Model Chisquare =  41319.85   Df =  53 Pr(>Chisq) = 0
-    ##  Goodness-of-fit index =  0.400484
-    ##  Adjusted goodness-of-fit index =  0.1176935
-    ##  SRMR =  0.06062757
+    ##  AIC =  41369.85
+    ##  BIC =  40893.28
     ## 
     ##  Normalized Residuals
     ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
@@ -1498,7 +1335,7 @@ summary(bt_sem2)
 semPaths(bt_sem2,rotation=2,'est',edge.label.cex = 1.2)
 ```
 
-![](Project_solar_energy_files/figure-gfm/unnamed-chunk-83-1.png)<!-- -->
+![](Project_solar_energy_files/figure-gfm/unnamed-chunk-76-1.png)<!-- -->
 
 SRMR, GFI, and AGFI:
 
