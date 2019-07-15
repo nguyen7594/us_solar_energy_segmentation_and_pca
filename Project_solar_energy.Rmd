@@ -126,6 +126,7 @@ Assumption: dataset is multivariate normality.
 lmi_pca <- princomp(num_vabs_cp_lmi.s, cor=T)
 summary(lmi_pca,loadings=T)
 ```
+
 ```{r}
 head(lmi_pca$scores)
 ```
@@ -149,7 +150,7 @@ autoplot(princomp(num_vabs_cp_lmi[,-13],cor=T),loadings=TRUE,loadings.label=TRUE
 
 
 **State level** 
-Extract numerical parts - *states only*
+#Extract numerical parts - *states only*
 ```{r}
 capacity_potential_lmi_state <- capacity_potential_lmi_clean %>%
   group_by(state_name) %>%
@@ -158,11 +159,12 @@ capacity_potential_lmi_state <- capacity_potential_lmi_clean %>%
 str(capacity_potential_lmi_state)
 ```
 
-Scatter plot
+#Scatter plot
 ```{r}
 pairs(scale(capacity_potential_lmi_state[,3:14]))
 ```
 
+#States names 
 ```{r}
 num_vabs_cp_lmi_state <- as.data.frame(capacity_potential_lmi_state[,3:14])
 rownames(num_vabs_cp_lmi_state) <- abbreviate(capacity_potential_lmi_state$state_name)
@@ -170,30 +172,30 @@ head(num_vabs_cp_lmi_state)
 ```
 
 
-
+#Standardize
 ```{r}
 num_vabs_cp_lmi_state.s <- normalize(num_vabs_cp_lmi_state, method = "standardize", range = c(0, 1), margin = 2, on.constant = "quiet")
 head(num_vabs_cp_lmi_state.s)
 ```
 
+#Correlation matrix
 ```{r}
 corr_mat = cor(num_vabs_cp_lmi_state.s)
 corrplot(corr_mat)
 ```
 
-Assumption: dataset is multivariate normality.
+#Assumption: dataset is multivariate normality.
 ```{r}
 lmi_pca_state <- princomp(num_vabs_cp_lmi_state.s, cor=T)
 summary(lmi_pca_state,loadings=T)
 ```
 
-#PC %Variance#
+#PC %Variance 
 ```{r}
 fviz_screeplot(lmi_pca_state, addlabels = TRUE, ylim = c(0, 100))
-
 ```
 
-
+#Biplot
 ```{r,dpi=1200,fig.height = 6, fig.width = 6, fig.align = "center"}
 biplot(lmi_pca_state,cex=0.9,col=c('black','red'))
 ```
@@ -212,7 +214,7 @@ num_vabs_cp_lmi_state$sunbelt <- capacity_potential_lmi_state$sunbelt
 ```
 
 
-```{r,dpi=1200,fig.height = 6, fig.width = 6, fig.align = "center"}
+```{r,d.pi=1200,fig.height = 6, fig.width = 6, fig.align = "center"}
 autoplot(princomp(num_vabs_cp_lmi_state[,-13],cor=T),loadings=TRUE,loadings.label=TRUE,loadings.label.size=4,loadings.label.colour='black',data=num_vabs_cp_lmi_state,colour='sunbelt',loadings.colour='black',size=5)+
   theme(legend.position="bottom",legend.title=element_text(size=15),legend.text=element_text(size=14),axis.text=element_text(size=14),axis.title=element_text(size=14))
 
@@ -262,7 +264,6 @@ For north states, eg: New York, New Jersey,... and Florida, there is a higher fo
 
 
 
-
 ** Clusters Analysis ** 
 
 #States level - SUM
@@ -305,12 +306,6 @@ plot(rev(hc.s$height))
 hc.s <- hclust(dist_state,'single')
 plot(rev(hc.s$height))
 ```
-
-**K-means clustering**
-```{r}
-
-```
-
 
 
 **Model-based clusering**
@@ -442,14 +437,6 @@ km$cluster
 ```{r}
 plot3d(lmi_mn_pc$scores[,1:3],type='s', size=1,col=km$cluster)
 text3d(lmi_mn_pc$scores[,1:3],text=abbreviate(capacity_potential_lmi_state_mn$state_name),col=km$cluster)
-```
-
-```{r}
-#writeWebGL(dir = "webGL", filename = file.path(dir, "index.html"))
-#browseURL(
-#  paste("file://", writeWebGL(dir=file.path(tempdir(), "webGL"), 
-#  width=500), sep="")
-#  )
 ```
 
 ```{r}
