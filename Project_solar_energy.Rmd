@@ -5,7 +5,7 @@ date: "April 1, 2019"
 output: rmarkdown::github_document
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(readr)
 library(dplyr)
 #install.packages('corrplot')
@@ -33,7 +33,7 @@ library(reshape2)
 
 **County-level aggregation**
 ## Using SUM 
-```{r}
+```{r message=FALSE, warning=FALSE}
 county_solar_potential <- read_csv("C:/Users/nguye/Documents/TTU/6350/Group Project/county_solar_potential.csv")
 county_solar_potential <-county_solar_potential[,-1]
 capacity_potential_lmi <- county_solar_potential %>%
@@ -111,7 +111,7 @@ num_vabs_cp_lmi.s <- normalize(num_vabs_cp_lmi, method = "standardize", range = 
 
 
 *Sun Belt states*
-```{r}
+```{r message=FALSE, warning=FALSE}
 sunbelt <- c('Florida','Georgia','South Carolina','Alabama','Mississippi', 'Louisiana','Texas','New Mexico','Arizona','Nevada','California')
 sunbelt %in% capacity_potential_lmi_clean$state_name
 capacity_potential_lmi_clean$sunbelt <- 'Other'
@@ -121,7 +121,8 @@ capacity_potential_lmi_clean$sunbelt[capacity_potential_lmi_clean$state_name %in
 
 
 **Principle Component Analysis for County-level**
-Assumption: dataset is multivariate normality.
+#Assumption: dataset is multivariate normality.
+# Principal Component Analysis - County level
 ```{r}
 lmi_pca <- princomp(num_vabs_cp_lmi.s, cor=T)
 summary(lmi_pca,loadings=T)
@@ -185,6 +186,7 @@ corrplot(corr_mat)
 ```
 
 #Assumption: dataset is multivariate normality.
+# Principal Component Analysis - States level
 ```{r}
 lmi_pca_state <- princomp(num_vabs_cp_lmi_state.s, cor=T)
 summary(lmi_pca_state,loadings=T)
@@ -204,7 +206,6 @@ biplot(lmi_pca_state,cex=0.9,col=c('black','red'))
 *Sun Belt states*
 ```{r}
 sunbelt <- c('Florida','Georgia','South Carolina','Alabama','Mississippi', 'Louisiana','Texas','New Mexico','Arizona','Nevada','California')
-sunbelt %in% capacity_potential_lmi_state$state_name
 capacity_potential_lmi_state$sunbelt <- 'Other'
 capacity_potential_lmi_state$sunbelt[capacity_potential_lmi_state$state_name %in% sunbelt] <- 'SunBelt'
 ```
@@ -222,11 +223,9 @@ autoplot(princomp(num_vabs_cp_lmi_state[,-13],cor=T),loadings=TRUE,loadings.labe
 
 
 # Map PC1 scores, PC2 scores
-
 ```{r}
 potential_state <- data.frame(state = capacity_potential_lmi_state$state_name, scores =lmi_pca_state$scores[,1])
 rownames(potential_state) <- NULL
-head(potential_state)
 ```
 
 ```{r,dpi=1500}
@@ -235,7 +234,7 @@ plot_usmap(data = potential_state, values = "scores", lines = "black") +
   theme(legend.position = "right")
 ```
 
-Inference PC1: 
+#Inference PC1: 
 PC1 shows the overall potential of solar rooftop energy capacity in different states for LMI households. It explains nearly 88% of the variance of original dataset. 
 Based on PC1 scores, it would be obeserved that as expected, California, Texas and Florida have most extremely potential in solar rooftop energy capacity compared to other states. 
 It is a little suprised that some north states, eg: New York, Pennsylvania, Massachusetts, New Jersey,... have considerable potential capacity for solar rooftop energy, even higher compared to other sunbelt states for LMI households.    
@@ -259,22 +258,10 @@ There is a contrast in solar rooftop potential capacity in 2 groups: multifamily
 For Texas and California, there is a higher focus of solar rooftop capacity potential in single-family-rent. *WHY?*
 For north states, eg: New York, New Jersey,... and Florida, there is a higher focus of solar rooftop capacity potential in multifamily-own. *WHY?*
 
+##----------------------------------------------------------------------#
 
-##---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
-
-
-
-** Clusters Analysis ** 
-
-#States level - SUM
-```{r}
-head(num_vabs_cp_lmi_state)
-```
-
-```{r}
-head(num_vabs_cp_lmi_state.s)
-```
-
+# Clusters Analysis  
+## States level - SUM
 **Hierarchical Clustering**
 *overall sum capacity*
 ```{r}
@@ -287,7 +274,7 @@ hc.s <- hclust(dist_state,'average')
 plot(rev(hc.s$height))
 ```
 
-# 5 clusters
+#5 clusters
 ```{r}
 ct.a <- cutree(hc.s,5)
 
@@ -347,12 +334,10 @@ plot(mclust_state,what='BIC')
 ```
 
 
-
-### Clustering using Mean
-Extract numerical parts - *states only*
-# Average solar rooftop energy capacity per county for each state
-# Reason: reduce the effect of size of large states eg: Cali, Texas,... to observe more the effect of other factors eg: housing type, tenure, income,...
-# Assumption: county sample size for each state are approximately same
+## Clustering using Mean aggregation at State level
+#PurposeAverage solar rooftop energy capacity per county for each state
+#Reason: reduce the effect of size of large states eg: Cali, Texas,... to observe more the effect of other factors eg: housing type, tenure, income,...
+#Assumption: county sample size for each state are approximately same
 ```{r}
 capacity_potential_lmi_state_mn <- capacity_potential_lmi_clean %>%
   group_by(state_name) %>%
@@ -374,8 +359,7 @@ corr_mat <- round(cor(mean_num_lmi_state_s),2)
 corrplot(corr_mat)
 ```
 
-
-
+#Principal Component Analysis
 ```{r}
 lmi_mn_pc <- princomp(mean_num_lmi_state_s,cor=T)
 summary(lmi_mn_pc, loading=T)
@@ -384,11 +368,9 @@ PC1: the overall average capacity per county for each states
 PC2: the contrast between mf_own and sf_rent, the higher score, the higher from mf_own
 PC3: the contrast between Risk-free (mf_own, sf_rent)v Risk-seeker(mf_rent,sf_own), the higher the less risk
 
-
 ```{r}
 cbind(lmi_mn_pc$scores[,1],capacity_potential_lmi_state_mn$state_name)
 ```
-
 
 ```{r}
 plot.wgss = function(mydata, maxc) {
@@ -409,7 +391,6 @@ abline(v=3,col='red',lty=3)
 fviz_nbclust(mean_num_lmi_state_s, kmeans, method = "wss") +
     geom_vline(xintercept = 3, linetype = 2,color='red')
 ```
-
 
 
 ```{r}
@@ -435,8 +416,8 @@ km$cluster
 
 #3D plotting
 ```{r}
-plot3d(lmi_mn_pc$scores[,1:3],type='s', size=1,col=km$cluster)
-text3d(lmi_mn_pc$scores[,1:3],text=abbreviate(capacity_potential_lmi_state_mn$state_name),col=km$cluster)
+#plot3d(lmi_mn_pc$scores[,1:3],type='s', size=1,col=km$cluster)
+#text3d(lmi_mn_pc$scores[,1:3],text=abbreviate(capacity_potential_lmi_state_mn$state_name),col=km$cluster)
 ```
 
 ```{r}
@@ -448,8 +429,6 @@ lmi_scores$States <- capacity_potential_lmi_state_mn$state_name
 ```{r}
 lmi_scores
 ```
-
-
 
 ```{r,dpi=1200}
 #plot(lmi_mn_pc$scores[,1:2],fill=km$cluster)
@@ -471,26 +450,23 @@ ggplot(lmi_scores,aes(Comp.1,Comp.3,color=Cluster))+
 ggplot(lmi_scores,aes(Comp.2,Comp.3,color=Cluster))+
   geom_point(size=2)+
   geom_text(aes(label=States))
-
 ```
-
 
 ```{r}
 biplot(lmi_mn_pc)
 ```
 
-
 ```{r setup}
-library(knitr)
-library(rgl)
-knit_hooks$set(webgl = hook_webgl)
+#library(knitr)
+#library(rgl)
+#knit_hooks$set(webgl = hook_webgl)
 ```
 
 ```{r testgl, webgl=TRUE}
-x <- sort(rnorm(1000))
-y <- rnorm(1000)
-z <- rnorm(1000) + atan2(x,y)
-plot3d(x, y, z, col=rainbow(1000))
+#x <- sort(rnorm(1000))
+#y <- rnorm(1000)
+#z <- rnorm(1000) + atan2(x,y)
+#plot3d(x, y, z, col=rainbow(1000))
 ```
 
 
@@ -505,14 +481,11 @@ summary(mc)
 
 
 
-##--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------##
+##------------------------------------------------------------------------------##
 
+# EFA & CCA
 
-**------EFA & CCA-------**
-
-
-## Type of buildings and its tenure which has high potential rooftop solar energy potential.
-
+##Type of buildings and its tenure which has high potential rooftop solar energy potential.
 ```{r}
 str(num_vabs_cp_lmi)
 ```
@@ -541,17 +514,12 @@ ggplot(loadings_lmifa_df,aes(Var1,Freq,fill=Freq))+
   geom_hline(yintercept=0.5,color='red')
 ```
 
-
-
-
 ```{r}
 f.loadings <- lmi_fa$loadings[,1:2]
 corHat <- f.loadings%*%t(f.loadings)+diag(lmi_fa$uniquenesses)
 sqrt(mean((cor(num_vabs_cp_lmi)-corHat)^2))
 
 ```
-
-
 
 ```{r}
 bt_model <- specifyModel(text='sf -> very_low_sf_own_mw, lambda1, NA
@@ -596,7 +564,6 @@ semPaths(bt_sem,rotation=2,'est',edge.label.cex = 1.3)
 ```
 
 
-
 SRMR, GFI, and AGFI:
 ```{r}
 options(fit.indices = c('GFI','AGFI','SRMR'))
@@ -618,7 +585,6 @@ criteria$AGFI
 
 
 ##Community sharing and Personal use 
-
 ```{r}
 bt_model <- specifyModel(text= 'Personal -> very_low_sf_own_mw, lambda1, NA
                                 Personal -> very_low_sf_rent_mw, lambda2, NA
