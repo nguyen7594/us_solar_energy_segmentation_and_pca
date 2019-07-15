@@ -2,7 +2,7 @@
 title: "Project_Solar_Energy"
 author: "Nguyen Nguyen"
 date: "April 1, 2019"
-output: word_document
+output: rmarkdown::github_document
 ---
 
 ```{r}
@@ -27,68 +27,54 @@ library(sem)
 library(semPlot)
 #install.packages('rgl') #3D plotting
 library(rgl)
-
+library(reshape2)
 ```
 
 
 **County-level aggregation**
-##SUM
+## Using SUM 
 ```{r}
 county_solar_potential <- read_csv("C:/Users/nguye/Documents/TTU/6350/Group Project/county_solar_potential.csv")
 county_solar_potential <-county_solar_potential[,-1]
-head(county_solar_potential)
 capacity_potential_lmi <- county_solar_potential %>%
   select(state_name:county_name,area_km2,very_low_mf_own_mw:mod_sf_rent_mw) 
 # Correlation matrix
 cormatrix <- round(cor(capacity_potential_lmi[,4:15]),4)
-head(capacity_potential_lmi)
-dim(capacity_potential_lmi)
 ```
 
 ```{r}
 head(capacity_potential_lmi)
 ```
 
-Check NA
+#Check NA
 ```{r}
 colSums(is.na(capacity_potential_lmi))
 ```
 
 #Observations with low values, assigned as 0
-```{r}
-sum(capacity_potential_lmi[,4:15]<0)
-```
 
 ```{r}
 capacity_potential_lmi$COUNT <- rowSums(abs(capacity_potential_lmi[,4:15]) < 0.000000000000001)
 sum(capacity_potential_lmi$COUNT > 5)
 ```
 
-#counties with from more than >= 50% value of zero values 
+#counties with nearly more than >= 50% variables of zero values 
 ```{r}
 capacity_potential_lmi[capacity_potential_lmi$COUNT>5,]
 ```
 
-#remove counties with from more than >= 50% value of zero values 
+#remove counties with from more than >= 50% variables of zero values 
 ```{r}
 capacity_potential_lmi_clean <- capacity_potential_lmi[capacity_potential_lmi$COUNT<6,]
 
 ```
-
-```{r}
-capacity_potential_lmi_clean[capacity_potential_lmi_clean$COUNT>5,]
-```
-```{r}
-dim(capacity_potential_lmi_clean) #13 rows removed
-```
-
 
 #Scatter plot
 ```{r}
 pairs(scale(capacity_potential_lmi_clean[,4:15]))
 ```
 
-Extract numerical parts - **all counties**
+#Extract numerical parts - **all counties**
 ```{r}
 num_vabs_cp_lmi <- as.data.frame(capacity_potential_lmi_clean[,4:15])
 
@@ -96,35 +82,16 @@ num_vabs_cp_lmi <- as.data.frame(capacity_potential_lmi_clean[,4:15])
 
 Correlation plot
 ```{r}
-library(reshape2)
-
-```
-```{r}
 corr_mat = round(cor(num_vabs_cp_lmi),2)
 corrplot(corr_mat)
 ```
 
 
-```{r}
-melted_cormat <- melt(corr_mat)
-head(melted_cormat)
-```
-
-
-
-
-
-
-
-
-
-Vectors of names of states and counties
+#Combine names of states and counties
 ```{r}
 a <- abbreviate(capacity_potential_lmi_clean$state_name)
 b <- abbreviate(capacity_potential_lmi_clean$county_name)
 rownames(num_vabs_cp_lmi) <- str_c(a,b,sep='_')
-head(num_vabs_cp_lmi)
-
 ```
 
 *Outliers*
@@ -133,20 +100,13 @@ plot(num_vabs_cp_lmi$very_low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_own_mw,type
 text(num_vabs_cp_lmi$very_low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_own_mw,labels=rownames(num_vabs_cp_lmi))
 plot(num_vabs_cp_lmi$low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_rent_mw,type='n')
 text(num_vabs_cp_lmi$low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_rent_mw,labels=rownames(num_vabs_cp_lmi))
-
 ```
-*Take note*: potential outliers: California_LosAngeles 
+Based on above 2 plots, potential outliers: California_LosAngeles. 
 
 
 **Standardize the dataset**
 ```{r}
 num_vabs_cp_lmi.s <- normalize(num_vabs_cp_lmi, method = "standardize", range = c(0, 1), margin = 2, on.constant = "quiet")
-```
-
-
-```{r}
-#View(num_vabs_cp_lmi.s)
-dim(num_vabs_cp_lmi.s)
 ```
 
 
@@ -158,9 +118,6 @@ capacity_potential_lmi_clean$sunbelt <- 'Other'
 capacity_potential_lmi_clean$sunbelt[capacity_potential_lmi_clean$state_name %in% sunbelt] <- 'SunBelt'
 ```
 
-```{r}
-#View(capacity_potential_lmi)
-```
 
 
 **Principle Component Analysis for County-level**
