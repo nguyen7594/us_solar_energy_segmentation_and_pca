@@ -1,1 +1,1 @@
-# MVA_Solarenergy
+# MultivariateAnalysis_Solarenergy
