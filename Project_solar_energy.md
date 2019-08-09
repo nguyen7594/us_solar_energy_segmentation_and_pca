@@ -28,7 +28,7 @@ library(rgl)
 library(reshape2)
 ```
 
-**County-level aggregation** \#\# Using
+**County-level aggregation** \#Using
 SUM
 
 ``` r
@@ -120,13 +120,14 @@ values
 capacity_potential_lmi_clean <- capacity_potential_lmi[capacity_potential_lmi$COUNT<6,]
 ```
 
-\#Scatter plot
+\#Scatter
+plot
 
 ``` r
 pairs(scale(capacity_potential_lmi_clean[,4:15]))
 ```
 
-![](Project_solar_energy_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+<img src="Project_solar_energy_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 \#Extract numerical parts - **all counties**
 
@@ -134,7 +135,7 @@ pairs(scale(capacity_potential_lmi_clean[,4:15]))
 num_vabs_cp_lmi <- as.data.frame(capacity_potential_lmi_clean[,4:15])
 ```
 
-Correlation plot
+\#Correlation plot
 
 ``` r
 corr_mat = round(cor(num_vabs_cp_lmi),2)
@@ -154,14 +155,16 @@ rownames(num_vabs_cp_lmi) <- str_c(a,b,sep='_')
 *Outliers*
 
 ``` r
-plot(num_vabs_cp_lmi$very_low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_own_mw,type='n')
+#Observing very_low_mf_rent v. very_low_sf_own
+plot(num_vabs_cp_lmi$very_low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_own_mw,type='n',xlab='very_low_mf_rent',ylab='very_low_sf_own')
 text(num_vabs_cp_lmi$very_low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_own_mw,labels=rownames(num_vabs_cp_lmi))
 ```
 
 ![](Project_solar_energy_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
-plot(num_vabs_cp_lmi$low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_rent_mw,type='n')
+#Observing low_mf_rent v. very_low_sf_rent
+plot(num_vabs_cp_lmi$low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_rent_mw,type='n',xlab='low_mf_rent',ylab='very_low_sf_rent')
 text(num_vabs_cp_lmi$low_mf_rent_mw,num_vabs_cp_lmi$very_low_sf_rent_mw,labels=rownames(num_vabs_cp_lmi))
 ```
 
